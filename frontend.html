@@ -43,7 +43,8 @@
         <input type="number" step="0.1" id="gpa" name="GPA" required>
         
         <label for="domain">Interested Domain:</label>
-        <input type="number" id="domain" name="InterestedDomain" required>
+        <input type="number" id="domain" name="Interested Domain" required>
+
         
         <label for="projects">Projects:</label>
         <input type="number" id="projects" name="Projects" required>
@@ -69,7 +70,8 @@
             <option value="Strong">Strong</option>
             <option value="Weak">Weak</option>
         </select>
-
+        <br>
+        <br>
         <button type="submit">Submit</button>
     </form>
 
@@ -86,7 +88,7 @@
                 Gender: parseInt(formData.get('Gender')),
                 Age: parseInt(formData.get('Age')),
                 GPA: parseFloat(formData.get('GPA')),
-                InterestedDomain: parseInt(formData.get('InterestedDomain')),
+                "Interested Domain": parseInt(formData.get('Interested Domain')),  // Keep the key as "Interested Domain"
                 Projects: parseInt(formData.get('Projects')),
                 Average: formData.get('GeneralSkill') === 'Average' ? 1 : 0,
                 Strong: formData.get('GeneralSkill') === 'Strong' ? 1 : 0,
@@ -98,6 +100,7 @@
                 Java_Strong: formData.get('JavaSkill') === 'Strong' ? 1 : 0,
                 Java_Weak: formData.get('JavaSkill') === 'Weak' ? 1 : 0
             };
+            console.log("Data being sent to backend:", JSON.stringify(data));
 
             // Send data to Go backend
             fetch('http://localhost:8080/predict', {
