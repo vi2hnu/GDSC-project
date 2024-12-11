@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Prediction Form</title>
+</head>
+<body>
+    <h1>Career Prediction Form</h1>
+    <form id="predictionForm" action="http://localhost:8080/submit" method="POST">
+        <label for="gender">Gender:</label>
+        <select id="gender" name="Gender" required>
+            <option value="0">Male</option>
+            <option value="1">Female</option>
+        </select><br><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="Age" required><br><br>
+
+        <label for="gpa">GPA:</label>
+        <input type="number" step="0.1" id="gpa" name="GPA" required><br><br>
+
+        <label for="interestedDomain">Interested Domain:</label>
+        <select id="interestedDomain" name="InterestedDomain" required>
+            <option value="0">AI Researcher</option>
+            <option value="1">Bioinformatician</option>
+            <option value="2">Blockchain Engineer</option>
+            <option value="3">Cloud Solutions Architect</option>
+            <!-- Add the rest of the domains similarly -->
+            <option value="32">Web Developer</option>
+        </select><br><br>
+
+        <label for="projects">Projects:</label>
+        <select id="projects" name="Projects" required>
+            <option value="0">3D Animation</option>
+            <option value="1">3D Modeling</option>
+            <option value="2">3D Rendering</option>
+            <!-- Add the rest of the project types similarly -->
+            <option value="64">iOS Game</option>
+        </select><br><br>
+
+        <label for="pythonSkill">Python Skill:</label>
+        <select id="pythonSkill" name="PythonSkill" required>
+            <option value="0">Weak</option>
+            <option value="1">Average</option>
+            <option value="2">Strong</option>
+        </select><br><br>
+
+        <label for="sqlSkill">SQL Skill:</label>
+        <select id="sqlSkill" name="SQLSkill" required>
+            <option value="0">Weak</option>
+            <option value="1">Average</option>
+            <option value="2">Strong</option>
+        </select><br><br>
+
+        <label for="javaSkill">Java Skill:</label>
+        <select id="javaSkill" name="JavaSkill" required>
+            <option value="0">Weak</option>
+            <option value="1">Average</option>
+            <option value="2">Strong</option>
+        </select><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

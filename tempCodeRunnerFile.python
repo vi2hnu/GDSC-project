@@ -1,0 +1,47 @@
+# train_and_save_model.py
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+import joblib
+
+# Load the dataset
+data = pd.read_csv('cs_students.csv')
+
+# Encode necessary columns
+career_encoder = LabelEncoder()
+data['Future Career'] = career_encoder.fit_transform(data['Future Career'])
+career_mapping = {index: career for index, career in enumerate(career_encoder.classes_)}
+
+domain_encoder = LabelEncoder()
+data['Interested Domain'] = domain_encoder.fit_transform(data['Interested Domain'])
+
+projects_encoder = LabelEncoder()
+data['Projects'] = projects_encoder.fit_transform(data['Projects'])
+
+# Drop irrelevant columns
+data = data.drop(['Student ID', 'Name', 'Major'], axis=1)
+
+# Encode the 'Gender' column
+data['Gender'] = data['Gender'].apply(lambda x: 0 if x == "Female" else 1)
+
+# One-hot encode the categorical columns
+data = data.join(pd.get_dummies(data["Python"]).astype(int)).drop("Python", axis=1)
+data = data.join(pd.get_dummies(data['SQL'], prefix='SQL').astype(int)).drop("SQL", axis=1)
+data = data.join(pd.get_dummies(data['Java'], prefix='Java').astype(int)).drop("Java", axis=1)
+
+# Split data into features and target
+X = data.drop('Future Career', axis=1)
+y = data['Future Career']
+
+# Split data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Initialize and train the model
+reg = RandomForestRegressor()
+reg.fit(X_train, y_train)
+
+# Save the model and mapping to files
+joblib.dump(reg, 'career_prediction_model.joblib')
+joblib.dump(career_mapping, 'career_mapping.joblib')
+print("Model and mapping saved successfully.")
