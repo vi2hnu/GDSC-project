@@ -3,64 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Prediction Form</title>
+    <title>Career Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label, select, input {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Career Prediction Form</h1>
-    <form id="predictionForm" action="http://localhost:8080/submit" method="POST">
+    <h1>Career Prediction</h1>
+    <form id="prediction-form">
         <label for="gender">Gender:</label>
-        <select id="gender" name="Gender" required>
-            <option value="0">Male</option>
-            <option value="1">Female</option>
-        </select><br><br>
-
+        <select id="gender" name="Gender">
+            <option value="0">Female</option>
+            <option value="1">Male</option>
+        </select>
+        
         <label for="age">Age:</label>
-        <input type="number" id="age" name="Age" required><br><br>
-
+        <input type="number" id="age" name="Age" required>
+        
         <label for="gpa">GPA:</label>
-        <input type="number" step="0.1" id="gpa" name="GPA" required><br><br>
-
-        <label for="interestedDomain">Interested Domain:</label>
-        <select id="interestedDomain" name="InterestedDomain" required>
-            <option value="0">AI Researcher</option>
-            <option value="1">Bioinformatician</option>
-            <option value="2">Blockchain Engineer</option>
-            <option value="3">Cloud Solutions Architect</option>
-            <!-- Add the rest of the domains similarly -->
-            <option value="32">Web Developer</option>
-        </select><br><br>
-
+        <input type="number" step="0.1" id="gpa" name="GPA" required>
+        
+        <label for="domain">Interested Domain:</label>
+        <input type="number" id="domain" name="InterestedDomain" required>
+        
         <label for="projects">Projects:</label>
-        <select id="projects" name="Projects" required>
-            <option value="0">3D Animation</option>
-            <option value="1">3D Modeling</option>
-            <option value="2">3D Rendering</option>
-            <!-- Add the rest of the project types similarly -->
-            <option value="64">iOS Game</option>
-        </select><br><br>
+        <input type="number" id="projects" name="Projects" required>
+        
+        <!-- Skill level dropdowns -->
+        <label for="general-skill">General Skill:</label>
+        <select id="general-skill" name="GeneralSkill">
+            <option value="Average">Average</option>
+            <option value="Strong">Strong</option>
+            <option value="Weak">Weak</option>
+        </select>
 
-        <label for="pythonSkill">Python Skill:</label>
-        <select id="pythonSkill" name="PythonSkill" required>
-            <option value="0">Weak</option>
-            <option value="1">Average</option>
-            <option value="2">Strong</option>
-        </select><br><br>
+        <label for="sql-skill">SQL Skill:</label>
+        <select id="sql-skill" name="SQLSkill">
+            <option value="Average">Average</option>
+            <option value="Strong">Strong</option>
+            <option value="Weak">Weak</option>
+        </select>
 
-        <label for="sqlSkill">SQL Skill:</label>
-        <select id="sqlSkill" name="SQLSkill" required>
-            <option value="0">Weak</option>
-            <option value="1">Average</option>
-            <option value="2">Strong</option>
-        </select><br><br>
-
-        <label for="javaSkill">Java Skill:</label>
-        <select id="javaSkill" name="JavaSkill" required>
-            <option value="0">Weak</option>
-            <option value="1">Average</option>
-            <option value="2">Strong</option>
-        </select><br><br>
+        <label for="java-skill">Java Skill:</label>
+        <select id="java-skill" name="JavaSkill">
+            <option value="Average">Average</option>
+            <option value="Strong">Strong</option>
+            <option value="Weak">Weak</option>
+        </select>
 
         <button type="submit">Submit</button>
     </form>
+
+    <h2>Predicted Career:</h2>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Collect form data
+            const formData = new FormData(this);
+            const data = {
+                Gender: parseInt(formData.get('Gender')),
+                Age: parseInt(formData.get('Age')),
+                GPA: parseFloat(formData.get('GPA')),
+                InterestedDomain: parseInt(formData.get('InterestedDomain')),
+                Projects: parseInt(formData.get('Projects')),
+                Average: formData.get('GeneralSkill') === 'Average' ? 1 : 0,
+                Strong: formData.get('GeneralSkill') === 'Strong' ? 1 : 0,
+                Weak: formData.get('GeneralSkill') === 'Weak' ? 1 : 0,
+                SQL_Average: formData.get('SQLSkill') === 'Average' ? 1 : 0,
+                SQL_Strong: formData.get('SQLSkill') === 'Strong' ? 1 : 0,
+                SQL_Weak: formData.get('SQLSkill') === 'Weak' ? 1 : 0,
+                Java_Average: formData.get('JavaSkill') === 'Average' ? 1 : 0,
+                Java_Strong: formData.get('JavaSkill') === 'Strong' ? 1 : 0,
+                Java_Weak: formData.get('JavaSkill') === 'Weak' ? 1 : 0
+            };
+
+            // Send data to Go backend
+            fetch('http://localhost:8080/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                // Display the predicted career result
+                document.getElementById('result').innerText = result.predicted_career;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
 </body>
 </html>

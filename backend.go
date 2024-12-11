@@ -1,15 +1,14 @@
 package main
 
 import (
-    "bytes"
     "encoding/json"
-    "fmt"
+    "bytes"
     "io"
     "log"
     "net/http"
+    "github.com/rs/cors"
 )
 
-// Define a struct to represent the prediction request payload
 type PredictionRequest struct {
     Gender           int     `json:"Gender"`
     Age              int     `json:"Age"`
@@ -27,31 +26,24 @@ type PredictionRequest struct {
     Java_Weak        int     `json:"Java_Weak"`
 }
 
-// Define a struct to handle the prediction response from the Flask API
 type PredictionResponse struct {
     PredictedCareer string `json:"predicted_career"`
 }
 
-func main() {
-    // Create a sample prediction request payload
-    requestData := PredictionRequest{
-        Gender:           0,
-        Age:              21,
-        GPA:              3.7,
-        InterestedDomain: 26,
-        Projects:         1,
-        Average:          0,
-        Strong:           0,
-        Weak:             1,
-        SQL_Average:      0,
-        SQL_Strong:       1,
-        SQL_Weak:         0,
-        Java_Average:     0,
-        Java_Strong:      1,
-        Java_Weak:        0,
+func handlePrediction(w http.ResponseWriter, r *http.Request) {
+    var requestData PredictionRequest
+
+    // Decode JSON request body
+    if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
+        http.Error(w, "Invalid input", http.StatusBadRequest)
+        return
     }
 
-    // Convert the requestData struct to JSON
+    // Log the request to ensure it's received correctly
+    log.Printf("Received data: %+v", requestData)
+
+    // Here you would call your machine learning model to predict the career
+    // For now, returning a dummy response
     jsonData, err := json.Marshal(requestData)
     if err != nil {
         log.Fatalf("Error marshaling request data: %v", err)
@@ -64,19 +56,43 @@ func main() {
         log.Fatalf("Error making request to Flask service: %v", err)
     }
     defer resp.Body.Close()
-
-    // Read the response from the Flask API
     body, err := io.ReadAll(resp.Body)
     if err != nil {
         log.Fatalf("Error reading response from Flask service: %v", err)
     }
-
-    // Parse the JSON response
     var predictionResponse PredictionResponse
     if err := json.Unmarshal(body, &predictionResponse); err != nil {
         log.Fatalf("Error unmarshaling response JSON: %v", err)
     }
 
     // Print the prediction result
-    fmt.Printf("Predicted Career: %s\n", predictionResponse.PredictedCareer)
+    log.Printf("Predicted Career: %s\n", predictionResponse.PredictedCareer)
+    // Respond with the predicted career
+    response := PredictionResponse{
+        PredictedCareer: predictionResponse.PredictedCareer,
+    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(response)
 }
+
+func main() {
+    // CORS middleware options
+   // Create CORS options
+c := cors.New(cors.Options{
+    AllowedOrigins: []string{"*"}, // Allow any origin (you can also specify a specific frontend URL here)
+    AllowedMethods: []string{"GET", "POST", "OPTIONS"}, // Allow necessary methods
+    AllowedHeaders: []string{"Content-Type"}, // Allow headers
+    AllowCredentials: true, // Allow credentials if needed
+    MaxAge: 3600, // Cache preflight response for 1 hour
+})
+
+// Create a handler and wrap it with CORS middleware
+handler := http.NewServeMux()
+handler.HandleFunc("/predict", handlePrediction)
+
+// Start the server with CORS middleware
+log.Println("Starting server on http://localhost:8080...")
+log.Fatal(http.ListenAndServe(":8080", c.Handler(handler)))
+
+}
+    
