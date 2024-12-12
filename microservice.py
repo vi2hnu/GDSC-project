@@ -37,7 +37,7 @@ def predict():
     predicted_career = career_mapping[round(prediction[0])]
     
     # Return the predicted career as a JSON response
-    return jsonify({"predicted_career": predicted_career})
+    return jsonify({"predicted_career": [career_mapping[round(prediction[0])],career_mapping[round(prediction[0]+1)],career_mapping[round(prediction[0])-1]]})
 
 if __name__ == '__main__':
     app.run(debug=True)

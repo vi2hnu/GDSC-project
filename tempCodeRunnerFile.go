@@ -27,7 +27,7 @@ type PredictionRequest struct {
 }
 
 type PredictionResponse struct {
-	PredictedCareers []string `json:"predicted_career"`
+	PredictedCareer string `json:"predicted_career"`
 }
 
 func handlePrediction(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +42,8 @@ func handlePrediction(w http.ResponseWriter, r *http.Request) {
 	// Log the request to ensure it's received correctly
 	log.Printf("Received data: %+v", requestData)
 
-	// Marshal the request data to send to Flask
+	// Here you would call your machine learning model to predict the career
+	// For now, returning a dummy response
 	jsonData, err := json.Marshal(requestData)
 	if err != nil {
 		log.Fatalf("Error marshaling request data: %v", err)
@@ -59,18 +60,16 @@ func handlePrediction(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalf("Error reading response from Flask service: %v", err)
 	}
-
 	var predictionResponse PredictionResponse
 	if err := json.Unmarshal(body, &predictionResponse); err != nil {
 		log.Fatalf("Error unmarshaling response JSON: %v", err)
 	}
 
-	// Log the predicted careers
-	log.Printf("Predicted Careers: %v\n", predictionResponse.PredictedCareers)
-
-	// Respond with the predicted careers
+	// Print the prediction result
+	log.Printf("Predicted Career: %s\n", predictionResponse.PredictedCareer)
+	// Respond with the predicted career
 	response := PredictionResponse{
-		PredictedCareers: predictionResponse.PredictedCareers,
+		PredictedCareer: predictionResponse.PredictedCareer,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)

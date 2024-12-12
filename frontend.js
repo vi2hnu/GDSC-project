@@ -31,7 +31,14 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     .then(response => response.json())
     .then(result => {
         const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = `<h1 style="text-decoration: underline;">Predicted Career:</h1><h3>${result.predicted_career}</h3>`;
+        
+        // Display the predicted careers
+        let careerHtml = `<h1 style="text-decoration: underline;">Predicted Careers:</h1>`;
+        result.predicted_career.forEach((career, index) => {
+            careerHtml += `<h3>${index + 1}. ${career}</h3>`;
+        });
+
+        resultDiv.innerHTML = careerHtml;
         resultDiv.classList.remove('hidden');
         resultDiv.classList.add('fade-in');
     })
@@ -39,9 +46,6 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
         console.error('Error:', error);
     });
 });
-
-
-// frontend.js
 
 // Data for dropdowns
 const projects = [
