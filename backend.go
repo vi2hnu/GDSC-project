@@ -13,7 +13,7 @@ type PredictionRequest struct {
 	Gender           int     `json:"Gender"`
 	Age              int     `json:"Age"`
 	GPA              float64 `json:"GPA"`
-	InterestedDomain int     `json:"Interested Domain"` // Ensure this matches "Interested Domain" in frontend
+	InterestedDomain int     `json:"Interested Domain"`
 	Projects         int     `json:"Projects"`
 	Average          int     `json:"Average"`
 	Strong           int     `json:"Strong"`

@@ -34,7 +34,7 @@ def predict():
     prediction = model.predict(input_df)
     
     # Map prediction back to the career
-    predicted_career = career_mapping[int(prediction[0])]
+    predicted_career = career_mapping[round(prediction[0])]
     
     # Return the predicted career as a JSON response
     return jsonify({"predicted_career": predicted_career})

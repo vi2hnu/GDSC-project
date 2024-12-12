@@ -1,0 +1,100 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: white; /* Set text color to white */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow-y: auto; /* Allow vertical scrolling */
+}
+
+/* Container for the blurred background */
+.background {
+    position: fixed; /* Make background stay in place */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('6195005.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(5px); /* Apply blur to the background */
+    z-index: -1; /* Place the background behind the content */
+}
+
+label {
+    color: white;
+    font-size: 20px;
+}
+
+select, input {
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 16px;
+    color: black;
+    background-color: white;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 25px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.container {
+    margin: auto;
+    align-items: center;
+}
+
+.heading {
+    margin: auto;
+}
+
+/* Hide the result initially */
+#result.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease-in-out;
+}
+
+#result.fade-in {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1s ease-in-out;
+}
+
+#result {
+    margin-top: 10px;
+    margin: auto;
+    text-align: center;
+    font-size: 30px;
+    color: #fff;
+    border-color: white;
+    border-style: solid;
+    border-radius: 20px;
+    width: 70%;
+}
+
+/* Fade-in effect for the page */
+body {
+    animation: fadeIn 0.2s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

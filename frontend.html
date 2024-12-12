@@ -4,121 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Career Prediction</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        label, select, input {
-            margin: 10px 0;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="frontend.css">
 </head>
 <body>
-    <h1>Career Prediction</h1>
-    <form id="prediction-form">
-        <label for="gender">Gender:</label>
-        <select id="gender" name="Gender">
-            <option value="0">Female</option>
-            <option value="1">Male</option>
-        </select>
-        
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="Age" required>
-        
-        <label for="gpa">GPA:</label>
-        <input type="number" step="0.1" id="gpa" name="GPA" required>
-        
-        <label for="domain">Interested Domain:</label>
-        <input type="number" id="domain" name="Interested Domain" required>
+    <div class="background"></div> <!-- Blurred background -->
 
-        
-        <label for="projects">Projects:</label>
-        <input type="number" id="projects" name="Projects" required>
-        
-        <!-- Skill level dropdowns -->
-        <label for="general-skill">General Skill:</label>
-        <select id="general-skill" name="GeneralSkill">
-            <option value="Average">Average</option>
-            <option value="Strong">Strong</option>
-            <option value="Weak">Weak</option>
-        </select>
+    <h1 style="text-align: center; font-size: 50px; text-decoration: underline;">Career Prediction</h1>
+    <hr>
+    <div class="container">
+        <h1 style="text-decoration: underline;">Enter details and get predicted career</h1>
+        <form id="prediction-form">
+            <div class="personal">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="Gender">
+                    <option value="0">Female</option>
+                    <option value="1">Male</option>
+                </select>
+                
+                <label for="age" style="margin-left: 30px;">Age:</label>
+                <input type="number" id="age" name="Age" required>
+            </div>
+            <br>
 
-        <label for="sql-skill">SQL Skill:</label>
-        <select id="sql-skill" name="SQLSkill">
-            <option value="Average">Average</option>
-            <option value="Strong">Strong</option>
-            <option value="Weak">Weak</option>
-        </select>
+            <label for="gpa">GPA:</label>
+            <input type="number" step="0.1" id="gpa" name="GPA" required>
+            
+            <label for="domain" style="margin-left: 30px;">Interested Domain:</label>
+            <select id="domain" name="Interested Domain"></select>
 
-        <label for="java-skill">Java Skill:</label>
-        <select id="java-skill" name="JavaSkill">
-            <option value="Average">Average</option>
-            <option value="Strong">Strong</option>
-            <option value="Weak">Weak</option>
-        </select>
-        <br>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+            <label for="projects" style="margin-left: 30px;">Projects:</label>
+            <select id="projects" name="Projects"></select>
+            <br>
+            <br>
+            <div class="skill">
+                <label for="general-skill">Python Skill:</label>
+                <select id="general-skill" name="GeneralSkill">
+                    <option value="Average">Average</option>
+                    <option value="Strong">Strong</option>
+                    <option value="Weak">Weak</option>
+                </select>
 
-    <h2>Predicted Career:</h2>
-    <div id="result"></div>
+                <label for="sql-skill" style="margin-left: 30px;">SQL Skill:</label>
+                <select id="sql-skill" name="SQLSkill">
+                    <option value="Average">Average</option>
+                    <option value="Strong">Strong</option>
+                    <option value="Weak">Weak</option>
+                </select>
 
-    <script>
-        document.getElementById('prediction-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+                <label for="java-skill" style="margin-left: 30px;">Java Skill:</label>
+                <select id="java-skill" name="JavaSkill">
+                    <option value="Average">Average</option>
+                    <option value="Strong">Strong</option>
+                    <option value="Weak">Weak</option>
+                </select>
+            </div>
+            <br>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 
-            // Collect form data
-            const formData = new FormData(this);
-            const data = {
-                Gender: parseInt(formData.get('Gender')),
-                Age: parseInt(formData.get('Age')),
-                GPA: parseFloat(formData.get('GPA')),
-                "Interested Domain": parseInt(formData.get('Interested Domain')),  // Keep the key as "Interested Domain"
-                Projects: parseInt(formData.get('Projects')),
-                Average: formData.get('GeneralSkill') === 'Average' ? 1 : 0,
-                Strong: formData.get('GeneralSkill') === 'Strong' ? 1 : 0,
-                Weak: formData.get('GeneralSkill') === 'Weak' ? 1 : 0,
-                SQL_Average: formData.get('SQLSkill') === 'Average' ? 1 : 0,
-                SQL_Strong: formData.get('SQLSkill') === 'Strong' ? 1 : 0,
-                SQL_Weak: formData.get('SQLSkill') === 'Weak' ? 1 : 0,
-                Java_Average: formData.get('JavaSkill') === 'Average' ? 1 : 0,
-                Java_Strong: formData.get('JavaSkill') === 'Strong' ? 1 : 0,
-                Java_Weak: formData.get('JavaSkill') === 'Weak' ? 1 : 0
-            };
-            console.log("Data being sent to backend:", JSON.stringify(data));
-
-            // Send data to Go backend
-            fetch('http://localhost:8080/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                // Display the predicted career result
-                document.getElementById('result').innerText = result.predicted_career;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
-    </script>
+    <div id="result" class="hidden">
+        <h1 style="text-decoration: underline;">Predicted Career:</h1>
+    </div>
+    <script src="frontend.js"></script>
 </body>
 </html>
