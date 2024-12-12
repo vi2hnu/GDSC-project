@@ -1,6 +1,28 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 import joblib
+import os
+import google.generativeai as genai
+
+genai.configure(api_key="gemini-api")
+
+generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 40,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain",
+}
+
+model = genai.GenerativeModel(
+  model_name="gemini-2.0-flash-exp",
+  generation_config=generation_config,
+)
+
+chat_session = model.start_chat(
+  history=[
+  ]
+)
 
 app = Flask(__name__)
 
@@ -36,8 +58,19 @@ def predict():
     # Map prediction back to the career
     predicted_career = career_mapping[round(prediction[0])]
     
-    # Return the predicted career as a JSON response
-    return jsonify({"predicted_career": [career_mapping[round(prediction[0])],career_mapping[round(prediction[0]+1)],career_mapping[round(prediction[0])-1]]})
+    # Send requests to chat session and get the message content
+    response1 = chat_session.send_message(f"tell me about this job in 10 words followed by if it is (high pay/low pay/average pay). Job: {career_mapping[round(prediction[0])]}")
+    response2 = chat_session.send_message(f"tell me about this job in 10 words followed by if it is (high pay/low pay/average pay). Job: {career_mapping[round(prediction[0]) + 1]}")
+    response3 = chat_session.send_message(f"tell me about this job in 10 words followed by if it is (high pay/low pay/average pay). Job: {career_mapping[round(prediction[0]) - 1]}")
+    
+    # Extract the content of each response
+    response1_text = career_mapping[round(prediction[0])] +". Job desc: "+ response1.text[:-1]
+    response2_text = career_mapping[round(prediction[0])+1]+". Job desc: "+ response2.text[:-1]
+    response3_text = career_mapping[round(prediction[0])-1]+". Job desc: "+  response3.text[:-1]
+    
+    # Return the predicted career along with the responses as a JSON
+    return jsonify({"predicted_career": [response1_text, response2_text, response3_text]})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
