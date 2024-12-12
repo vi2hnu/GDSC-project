@@ -1,10 +1,6 @@
 document.getElementById('prediction-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // Show the loading GIF
-    const loadingDiv = document.getElementById('loading');
-    loadingDiv.classList.remove('hidden'); // Show loading
-
     // Collect form data
     const formData = new FormData(this);
     const data = {
@@ -35,9 +31,6 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
     .then(response => response.json())
     .then(result => {
         const resultDiv = document.getElementById('result');
-        
-        // Hide the loading GIF
-        loadingDiv.classList.add('hidden'); // Hide loading GIF
 
         // Display the predicted careers
         let careerHtml = `<h1 style="text-decoration: underline;">Predicted Careers:</h1>`;
@@ -48,15 +41,14 @@ document.getElementById('prediction-form').addEventListener('submit', function(e
         resultDiv.innerHTML = careerHtml;
         resultDiv.classList.remove('hidden');
         resultDiv.classList.add('fade-in');
+
+        // Scroll to the result section
+        resultDiv.scrollIntoView({ behavior: 'smooth' });
     })
     .catch(error => {
         console.error('Error:', error);
-
-        // Hide the loading GIF if there's an error
-        loadingDiv.classList.add('hidden');
     });
 });
-
 
 // Data for dropdowns
 const projects = [
