@@ -2,11 +2,13 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
     color: white; /* Set text color to white */
+    background: url('/static/images/background.jpg') no-repeat center center fixed;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     overflow-y: auto; /* Allow vertical scrolling */
 }
+
 
 /* Container for the blurred background */
 .background {

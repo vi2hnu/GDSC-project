@@ -4,7 +4,7 @@ import joblib
 import os
 import google.generativeai as genai
 
-genai.configure(api_key="Gemini-api")
+genai.configure(api_key="AIzaSyD0nFabZwGH1vYKPqmLb2GCQPKgLzaYP48")
 
 generation_config = {
   "temperature": 1,

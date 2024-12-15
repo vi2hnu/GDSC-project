@@ -1,11 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
+
 	"github.com/rs/cors"
 )
 
@@ -76,21 +78,44 @@ func handlePrediction(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func serveTemplate(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("frontend.html")
+	if err != nil {
+		http.Error(w, "Unable to load template", http.StatusInternalServerError)
+		log.Fatalf("Error loading template: %v", err)
+	}
+
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, "Unable to render template", http.StatusInternalServerError)
+		log.Fatalf("Error rendering template: %v", err)
+	}
+}
+
 func main() {
-	// CORS middleware options
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders: []string{"Content-Type"},
-		AllowCredentials: true,
-		MaxAge: 3600,
-	})
+    // CORS middleware options
+    c := cors.New(cors.Options{
+        AllowedOrigins: []string{"*"},
+        AllowedMethods: []string{"GET", "POST", "OPTIONS"},
+        AllowedHeaders: []string{"Content-Type"},
+        AllowCredentials: true,
+        MaxAge: 3600,
+    })
 
-	// Create a handler and wrap it with CORS middleware
-	handler := http.NewServeMux()
-	handler.HandleFunc("/predict", handlePrediction)
+    // Create a handler and wrap it with CORS middleware
+    handler := http.NewServeMux()
 
-	// Start the server with CORS middleware
-	log.Println("Starting server on http://localhost:8080...")
-	log.Fatal(http.ListenAndServe(":8080", c.Handler(handler)))
+    // Serve the HTML template
+    handler.HandleFunc("/", serveTemplate)
+
+    // Serve static files (CSS, JS, images, etc.)
+    staticFileServer := http.FileServer(http.Dir("static"))
+    handler.Handle("/static/", http.StripPrefix("/static", staticFileServer))
+
+    // Handle prediction requests
+    handler.HandleFunc("/predict", handlePrediction)
+
+    // Start the server with CORS middleware
+    log.Println("Starting server on http://localhost:8080...")
+    log.Fatal(http.ListenAndServe(":8080", c.Handler(handler)))
 }
